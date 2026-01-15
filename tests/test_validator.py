@@ -15,6 +15,7 @@ class TestValidator(unittest.TestCase):
         self.log_file_cl_3_ipv6_pattern = 'tests/fixtures/logs/scielo.cl/2024-12-10_scielo.cl.log.gz'
         self.log_file_wi_1_invalid_content = 'tests/fixtures/logs/scielo.wi/2024-02-20_caribbean.scielo.org.1.log.gz'
         self.log_file_wi_2_invalid_file_name = 'tests/fixtures/logs/scielo.wi/invalid_file_name.log.gz'
+        self.log_file_br_bunny = 'tests/fixtures/logs/bunnynet/2025/2025-08-17_scielo-br.log'
 
     def test_get_execution_mode_is_file(self):
         exec_mode = validator.get_execution_mode(self.log_file_wi_1_invalid_content)
@@ -403,6 +404,47 @@ class TestValidator(unittest.TestCase):
                 'all': True
             },
             'probably_date': datetime.datetime(2024, 12, 10, 0, 0)
+        }
+
+        self.assertDictEqual(results, expected)
+
+    def test_line_with_bunny_pattern(self):
+        results = validator.pipeline_validate(
+            sample_size=1,
+            path=self.log_file_br_bunny,
+            apply_path_validation=True,
+            apply_content_validation=True,
+        )
+        expected = {
+            'mode': {
+                'path_validation': True,
+                'content_validation': True,
+            },
+            'path': {
+                'date': '2025-08-17',
+                'collection': 'scl',
+                'paperboy': False,
+                'mimetype': 'text/plain',
+                'extension': '.log'
+            },
+            'content': {
+                'summary': {
+                    'ips': {'local': 0, 'remote': 19, 'unknown': 1},
+                    'datetimes': {
+                        (2025, 8, 16, 20): 10,
+                        (2025, 8, 17, 19): 2,
+                        (2025, 8, 17, 20): 7,
+                    },
+                    'invalid_lines': 1,
+                    'total_lines': 20
+                }
+            },
+            'is_valid': {
+                'ips': True,
+                'dates': True,
+                'all': True
+            },
+            'probably_date': datetime.datetime(2025, 8, 16, 0, 0)
         }
 
         self.assertDictEqual(results, expected)
