@@ -232,6 +232,7 @@ def analyze_log_content(path, total_lines, sample_lines):
                     values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN,
                     values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_WITH_IP_LIST,
                     values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN_WITH_IP_LIST,
+                    values.PATTERN_BUNNY,
                 ]
 
                 match = None
@@ -265,14 +266,19 @@ def analyze_log_content(path, total_lines, sample_lines):
                     content = match.groupdict()
 
                     matched_datetime = content.get('date', '')
+                    matched_timestamp = content.get('timestamp', '')
+
                     try:
-                        year, month, day, hour = get_year_month_day_hour_from_date_str(matched_datetime)
+                        if matched_datetime:
+                            year, month, day, hour = get_year_month_day_hour_from_date_str(matched_datetime)
+                        elif matched_timestamp:
+                            year, month, day, hour = get_year_month_day_hour_from_timestamp(matched_timestamp)
 
                         if (year, month, day, hour) not in datetimes:
                             datetimes[(year, month, day, hour)] = 0
                         datetimes[(year, month, day, hour)] += 1
-                        
-                    except ValueError:
+
+                    except (ValueError, exceptions.InvalidTimestampContentError):
                         invalid_lines += 1
 
                 else:
