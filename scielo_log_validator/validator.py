@@ -109,7 +109,7 @@ def get_year_month_day_hour_from_date_str(log_date):
         tuple: A tuple containing the year (int), month (int), day (int), and hour (int).
 
     Example:
-        >>> extract_year_month_day_hour('12/Mar/2023:14:22:30 +0000')
+        >>> get_year_month_day_hour_from_date_str('12/Mar/2023:14:22:30 +0000')
         (2023, 3, 12, 14)
     """
     # Discard offset
