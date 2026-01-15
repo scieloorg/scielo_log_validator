@@ -3,6 +3,7 @@ COLLECTION_FILE_NAME_IDENTIFIERS = {
     '_scielo.bo': 'bol',
     '_scielo.1.br': 'scl',
     '_scielo.2.br': 'scl',
+    '_scielo-br': 'scl',
     '_scielo.cl': 'chl',
     '_scielo.co': 'col',
     '_scielo.cr': 'cru',
