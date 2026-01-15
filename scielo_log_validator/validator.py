@@ -74,6 +74,30 @@ def get_ip_type(ip):
     return 'unknown'
 
 
+def get_year_month_day_hour_from_timestamp(timestamp):
+    """
+    Extracts the year, month, day, and hour from a timestamp.
+
+    Args:
+        timestamp:
+
+    Returns
+        tuple: A tuple containing the year (int), month (int), day (int), and hour (int).
+
+    Example:
+         >>> get_year_month_day_hour_from_timestamp("1755473648")
+         (2025, 8, 17, 20)
+    """
+    if isinstance(timestamp, str):
+        try:
+            timestamp = int(timestamp)
+        except ValueError:
+            raise exceptions.InvalidTimestampContentError("Timestamp must be an integer or a string representing an integer")
+
+    dt = datetime.fromtimestamp(timestamp)
+    return dt.year, dt.month, dt.day, dt.hour
+
+
 def get_year_month_day_hour_from_date_str(log_date):
     """
     Extracts the year, month, day, and hour from a log date string.

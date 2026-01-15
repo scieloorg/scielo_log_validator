@@ -1,7 +1,7 @@
 import datetime
 import unittest
 
-from scielo_log_validator import validator
+from scielo_log_validator import exceptions, validator
 
 
 class TestValidator(unittest.TestCase):
@@ -33,6 +33,21 @@ class TestValidator(unittest.TestCase):
         timestamp = '12/Mar/2023:14:22:30 +0000'
         y, m, d, h = validator.get_year_month_day_hour_from_date_str(timestamp)
         self.assertEqual((y, m, d, h), (2023, 3, 12, 14))
+
+    def test_extract_year_month_day_hour_from_timestamp_str(self):
+        timestamp = '1755473648'
+        y, m, d, h = validator.get_year_month_day_hour_from_timestamp(timestamp)
+        self.assertEqual((y, m, d, h), (2025, 8, 17, 20))
+
+    def test_extract_year_month_day_hour_from_timestamp_empty_str(self):
+        timestamp = ""
+        with self.assertRaises(exceptions.InvalidTimestampContentError):
+            validator.get_year_month_day_hour_from_timestamp(timestamp)
+
+    def test_extract_year_month_day_hour_from_timestamp_int(self):
+        timestamp = 1755473648
+        y, m, d, h = validator.get_year_month_day_hour_from_timestamp(timestamp)
+        self.assertEqual((y, m, d, h), (2025, 8, 17, 20))
 
     def test_count_lines(self):
         obtained_nlines = validator.get_total_lines(self.log_file_wi_1_invalid_content)
