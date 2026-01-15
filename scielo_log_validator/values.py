@@ -62,3 +62,7 @@ PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN = (
 PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN_WITH_IP_LIST = (
     r'(?P<domain>.*?)\s' + PATTERN_COMMON_LOG_FORMAT_WITH_IP_LIST + r'\s+"(?P<referrer>.*?)"\s+"(?P<user_agent>.*?)"'
 )
+
+PATTERN_BUNNY = (
+    r'^(?P<cache>HIT|MISS)\|(?P<status>\d{3})\|(?P<timestamp>\d{10})\|(?P<bytes>\d+)\|(?P<zone>\d+)\|(?P<ip>\d{1,3}(?:\.\d{1,3}){3})\|(?P<others>[^|]*\|https?://[^|]+\|[A-Z]{2}\|[^|]+\|[a-f0-9]{32}\|[A-Z]{2})$'
+)
