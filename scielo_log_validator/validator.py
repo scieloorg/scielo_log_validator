@@ -74,6 +74,30 @@ def get_ip_type(ip):
     return 'unknown'
 
 
+def get_year_month_day_hour_from_timestamp(timestamp):
+    """
+    Extracts the year, month, day, and hour from a timestamp.
+
+    Args:
+        timestamp:
+
+    Returns
+        tuple: A tuple containing the year (int), month (int), day (int), and hour (int).
+
+    Example:
+         >>> get_year_month_day_hour_from_timestamp("1755473648")
+         (2025, 8, 17, 20)
+    """
+    if isinstance(timestamp, str):
+        try:
+            timestamp = int(timestamp)
+        except ValueError:
+            raise exceptions.InvalidTimestampContentError("Timestamp must be an integer or a string representing an integer")
+
+    dt = datetime.fromtimestamp(timestamp)
+    return dt.year, dt.month, dt.day, dt.hour
+
+
 def get_year_month_day_hour_from_date_str(log_date):
     """
     Extracts the year, month, day, and hour from a log date string.
@@ -85,7 +109,7 @@ def get_year_month_day_hour_from_date_str(log_date):
         tuple: A tuple containing the year (int), month (int), day (int), and hour (int).
 
     Example:
-        >>> extract_year_month_day_hour('12/Mar/2023:14:22:30 +0000')
+        >>> get_year_month_day_hour_from_date_str('12/Mar/2023:14:22:30 +0000')
         (2023, 3, 12, 14)
     """
     # Discard offset
@@ -208,6 +232,7 @@ def analyze_log_content(path, total_lines, sample_lines):
                     values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN,
                     values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_WITH_IP_LIST,
                     values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN_WITH_IP_LIST,
+                    values.PATTERN_BUNNY,
                 ]
 
                 match = None
@@ -241,14 +266,19 @@ def analyze_log_content(path, total_lines, sample_lines):
                     content = match.groupdict()
 
                     matched_datetime = content.get('date', '')
+                    matched_timestamp = content.get('timestamp', '')
+
                     try:
-                        year, month, day, hour = get_year_month_day_hour_from_date_str(matched_datetime)
+                        if matched_datetime:
+                            year, month, day, hour = get_year_month_day_hour_from_date_str(matched_datetime)
+                        elif matched_timestamp:
+                            year, month, day, hour = get_year_month_day_hour_from_timestamp(matched_timestamp)
 
                         if (year, month, day, hour) not in datetimes:
                             datetimes[(year, month, day, hour)] = 0
                         datetimes[(year, month, day, hour)] += 1
-                        
-                    except ValueError:
+
+                    except (ValueError, exceptions.InvalidTimestampContentError):
                         invalid_lines += 1
 
                 else:
