@@ -115,7 +115,7 @@ def extract_file_extension_from_path(path):
     _, extension = os.path.splitext(file)
     if extension:
         return extension
-    raise exceptions.LogFileExtensionUndetectable('Could not extract extension from %s' % path)
+    raise exceptions.LogFileExtensionUndetectableError('Could not extract extension from %s' % path)
 
 
 def extract_date_from_path(path):
