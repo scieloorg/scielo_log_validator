@@ -64,5 +64,16 @@ PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN_WITH_IP_LIST = (
 )
 
 PATTERN_BUNNY = (
-    r'^(?P<cache>HIT|MISS)\|(?P<status>\d{3})\|(?P<timestamp>\d{10})\|(?P<bytes>\d+)\|(?P<zone>\d+)\|(?P<ip>\d{1,3}(?:\.\d{1,3}){3})\|(?P<others>[^|]*\|https?://[^|]+\|[A-Z]{2}\|[^|]+\|[a-f0-9]{32}\|[A-Z]{2})$'
+    r'^(?P<cache>HIT|MISS|BYPASS|EXPIRED|STALE)\|'
+    r'(?P<status>\d{3})\|'
+    r'(?P<timestamp>\d{10})\|'
+    r'(?P<length>\d+)\|'
+    r'(?P<zone>\d+)\|'
+    r'(?P<ip>[a-fA-F0-9:.]+)\|'
+    r'(?P<referrer>[^|]*)\|'
+    r'(?P<path>[^|]+)\|'
+    r'(?P<country>[A-Z]{2})\|'
+    r'(?P<user_agent>[^|]+)\|'
+    r'(?P<request_id>[a-f0-9]{32})\|'
+    r'(?P<iq>[A-Z]{2})$'
 )

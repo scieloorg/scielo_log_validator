@@ -429,14 +429,21 @@ class TestValidator(unittest.TestCase):
             },
             'content': {
                 'summary': {
-                    'ips': {'local': 0, 'remote': 19, 'unknown': 1},
+                    'ips': {'local': 0, 'remote': 145, 'unknown': 5},
                     'datetimes': {
                         (2025, 8, 16, 20): 10,
+                        (2025, 8, 16, 23): 19,
+                        (2025, 8, 17, 0): 25,
+                        (2025, 8, 17, 1): 58,
+                        (2025, 8, 17, 2): 3,
+                        (2025, 8, 17, 3): 17,
+                        (2025, 8, 17, 4): 3,
+                        (2025, 8, 17, 5): 1,
                         (2025, 8, 17, 19): 2,
                         (2025, 8, 17, 20): 7,
                     },
-                    'invalid_lines': 1,
-                    'total_lines': 20
+                    'invalid_lines': 5,
+                    'total_lines': 150
                 }
             },
             'is_valid': {
@@ -444,7 +451,7 @@ class TestValidator(unittest.TestCase):
                 'dates': True,
                 'all': True
             },
-            'probably_date': datetime.datetime(2025, 8, 16, 0, 0)
+            'probably_date': datetime.datetime(2025, 8, 17, 0, 0)
         }
 
         self.assertDictEqual(results, expected)
