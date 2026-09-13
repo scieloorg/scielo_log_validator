@@ -24,6 +24,17 @@ MIN_NUMBER_OF_SAMPLE_LINES = int(os.environ.get('MIN_NUMBER_OF_SAMPLE_LINES', '1
 MIN_PLAUSIBLE_UNIX_TIMESTAMP = 946684800
 MAX_PLAUSIBLE_UNIX_TIMESTAMP = 4102444800
 
+LOG_LINE_PATTERNS = tuple(
+    re.compile(pattern)
+    for pattern in (
+        values.PATTERN_NCSA_EXTENDED_LOG_FORMAT,
+        values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN,
+        values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_WITH_IP_LIST,
+        values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN_WITH_IP_LIST,
+        values.PATTERN_BUNNYCDN_LOG_FORMAT,
+    )
+)
+
 # Default message for the application
 COMMAND_LINE_SCRIPT_MESSAGE = '''
 SciELO Log Validator
@@ -246,19 +257,11 @@ def analyze_log_content(path, total_lines, sample_lines):
             line_counter += 1
 
             if line_counter in eval_lines:
-                patterns = [
-                    values.PATTERN_NCSA_EXTENDED_LOG_FORMAT,
-                    values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN,
-                    values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_WITH_IP_LIST,
-                    values.PATTERN_NCSA_EXTENDED_LOG_FORMAT_DOMAIN_WITH_IP_LIST,
-                    values.PATTERN_BUNNYCDN_LOG_FORMAT,
-                ]
-
                 match = None
                 ip_type = 'unknown'
 
-                for pattern in patterns:
-                    match = re.match(pattern, decoded_line)
+                for pattern in LOG_LINE_PATTERNS:
+                    match = pattern.match(decoded_line)
 
                     # Match the pattern and extract the IP address
                     if match:
