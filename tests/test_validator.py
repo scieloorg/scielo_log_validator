@@ -135,6 +135,27 @@ class TestValidator(unittest.TestCase):
         results = validator.validate_content(self.log_file_wi_1_invalid_content)
         self.assertIn('summary', results)
 
+    def test_analyze_log_content_accepts_long_classic_url(self):
+        long_unused_parameter = '%C3' * 2048
+        line = (
+            '8.8.8.8 - - [23/Jan/2026:00:00:00 -0600] '
+            '"GET /scielo.php?lng=es&nrm='
+            f'{long_unused_parameter}'
+            '&pid=S0043-31442017000600634&script=sci_arttext&tlng=es '
+            'HTTP/1.0" 200 123 "-" "Mozilla/5.0"\n'
+        )
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = f'{temp_dir}/2026-01-23_scielo.mx.log.gz'
+            with gzip.open(path, 'wt') as output:
+                output.write(line)
+
+            result = validator.analyze_log_content(path, 1, 1)
+
+        self.assertEqual(result['invalid_lines'], 0)
+        self.assertEqual(result['ips']['remote'], 1)
+        self.assertEqual(result['datetimes'], {(2026, 1, 23, 0): 1})
+
     def test_validate_content_reports_corrupted_gzip(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             path = f'{temp_dir}/2026-09-04_scielo.pe.log.gz'
